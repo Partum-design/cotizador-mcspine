@@ -117,13 +117,13 @@ select:focus-visible {
 }
 
 .brand--paper {
-  width: 200px;
-  height: 64px;
+  width: 240px;
+  height: 120px;
 }
 
 .brand--paper .brand__official {
-  width: 200px;
-  height: 64px;
+  width: 240px;
+  height: 120px;
   object-fit: contain;
   object-position: left center;
 }
@@ -377,7 +377,7 @@ select:focus-visible {
 
 .nora-actions {
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: auto auto 1fr;
   gap: 8px;
 }
 
@@ -414,6 +414,17 @@ select:focus-visible {
 
 .nora-generate:hover {
   background: #1866d2;
+}
+
+.nora-generate--secondary {
+  color: #ffffff;
+  background: transparent;
+  border-color: #7ea1d1;
+}
+
+.nora-generate--secondary:hover {
+  color: #092245;
+  background: #ffffff;
 }
 
 .nora-generate:disabled {
@@ -1038,8 +1049,8 @@ select:focus-visible {
 }
 
 .paper-brand > img {
-  max-width: 190px;
-  max-height: 72px;
+  max-width: 260px;
+  max-height: 120px;
   object-fit: contain;
   object-position: left center;
 }
@@ -1802,13 +1813,18 @@ select:focus-visible {
   }
 
   .paper-brand .brand--paper {
-    width: 150px;
-    height: 48px;
+    width: 160px;
+    height: 80px;
   }
 
   .paper-brand .brand__official {
-    width: 150px;
-    height: 48px;
+    width: 160px;
+    height: 80px;
+  }
+
+  .paper-brand > img {
+    max-width: 170px;
+    max-height: 80px;
   }
 
   .paper-title h1 {
@@ -1910,7 +1926,7 @@ select:focus-visible {
   }
 
   .nora-actions {
-    grid-template-columns: 0.72fr 1.6fr;
+    grid-template-columns: 0.8fr 0.9fr 1.5fr;
   }
 
   .mobile-switcher button {

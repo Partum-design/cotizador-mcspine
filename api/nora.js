@@ -1,4 +1,8 @@
-const MODEL = "gemini-3.1-flash-lite";
+// Modelo principal configurable; si Google no lo reconoce se usa el de respaldo.
+const MODELS = [
+  process.env.GEMINI_MODEL || "gemini-3.1-flash-lite",
+  "gemini-2.5-flash-lite",
+].filter((model, index, list) => model && list.indexOf(model) === index);
 const MAX_PROMPT_LENGTH = 1200;
 
 import { PRODUCTS, CATEGORY_LABEL } from "../src/products.js";
@@ -113,14 +117,15 @@ export default async function handler(request, response) {
     return response.status(405).json({ error: "Método no permitido." });
   }
 
-  const apiKey = process.env.GEMINI_API_KEY;
+  // Acepta GOOGLE_API_KEY (nombre usado en el proyecto principal de Partum) o GEMINI_API_KEY.
+  const apiKey = (process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY || "").trim();
   if (
     !apiKey ||
     apiKey === "undefined" ||
     apiKey.startsWith("pega_aqui_")
   ) {
     return response.status(503).json({
-      error: "NORA aún no tiene configurada la variable GEMINI_API_KEY.",
+      error: "NORA aún no tiene configurada la variable GOOGLE_API_KEY.",
       code: "KEY_NOT_CONFIGURED",
     });
   }
@@ -153,29 +158,36 @@ export default async function handler(request, response) {
   ].join("\n");
 
   try {
-    const geminiResponse = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-goog-api-key": apiKey,
-        },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: instruction }] }],
-          generationConfig: {
-            temperature: 0.1,
-            maxOutputTokens: 1400,
-            responseMimeType: "application/json",
-            responseSchema: serviceSchema,
-            thinkingConfig: {
-              thinkingLevel: "minimal",
-            },
+    let geminiResponse;
+    for (const model of MODELS) {
+      geminiResponse = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-goog-api-key": apiKey,
           },
-        }),
-        signal: AbortSignal.timeout(20_000),
-      },
-    );
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: instruction }] }],
+            generationConfig: {
+              temperature: 0.1,
+              maxOutputTokens: 1400,
+              responseMimeType: "application/json",
+              responseSchema: serviceSchema,
+              // Sin razonamiento extendido: respuesta más rápida.
+              thinkingConfig: model.startsWith("gemini-2")
+                ? { thinkingBudget: 0 }
+                : { thinkingLevel: "minimal" },
+            },
+          }),
+          signal: AbortSignal.timeout(20_000),
+        },
+      );
+      // 404 = modelo no disponible para esta clave; probar el siguiente.
+      if (geminiResponse.status !== 404) break;
+      console.warn(`Gemini model ${model} not available, trying fallback`);
+    }
 
     const payload = await geminiResponse.json();
 
