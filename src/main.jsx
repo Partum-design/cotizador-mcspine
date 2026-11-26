@@ -501,7 +501,7 @@ function App() {
     recognition.start();
   };
 
-  const askNora = async () => {
+  const askNora = async (autoApply = false) => {
     const prompt = noraPrompt.trim();
     if (prompt.length < 8) {
       setNoraError("Describe o dicta los productos con un poco más de detalle.");
@@ -525,17 +525,20 @@ function App() {
         throw new Error(payload.error || "NORA no pudo preparar los conceptos.");
       }
 
-      setNoraSuggestions(
-        (payload.services || []).map((service) => {
-          const product = PRODUCTS.find((entry) => entry.slug === service.slug);
-          return {
-            ...service,
-            image: product?.img || "",
-            slug: product?.slug || "",
-          };
-        }),
-      );
-      setNoraMessage(payload.message || "Propuesta preparada.");
+      const suggestions = (payload.services || []).map((service) => {
+        const product = PRODUCTS.find((entry) => entry.slug === service.slug);
+        return {
+          ...service,
+          image: product?.img || "",
+          slug: product?.slug || "",
+        };
+      });
+      if (autoApply) {
+        applyNoraSuggestions(suggestions);
+      } else {
+        setNoraSuggestions(suggestions);
+        setNoraMessage(payload.message || "Propuesta preparada.");
+      }
     } catch (error) {
       setNoraError(error.message || "NORA no pudo conectarse.");
     } finally {
@@ -543,9 +546,10 @@ function App() {
     }
   };
 
-  const applyNoraSuggestions = () => {
-    if (!noraSuggestions.length) return;
-    const items = noraSuggestions.map((service) => ({
+  const applyNoraSuggestions = (source = noraSuggestions) => {
+    const list = Array.isArray(source) ? source : noraSuggestions;
+    if (!list.length) return;
+    const items = list.map((service) => ({
       ...service,
       id: crypto.randomUUID(),
     }));
@@ -674,9 +678,15 @@ function App() {
                   maxLength="1200"
                   value={noraPrompt}
                   onChange={(event) => setNoraPrompt(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" && (event.ctrlKey || event.metaKey) && !noraLoading) {
+                      event.preventDefault();
+                      askNora(true);
+                    }
+                  }}
                   placeholder="Ejemplo: 2 cajas MectaLIF Transforaminal a $18,500 cada una, un sistema MEGAFIX de 4 tornillos a $42,000 y renta de instrumental."
                 />
-                <small>{noraPrompt.length}/1200 caracteres</small>
+                <small>{noraPrompt.length}/1200 caracteres · Ctrl + Enter crea y agrega directo</small>
               </label>
 
               <div className="nora-actions">
@@ -691,16 +701,27 @@ function App() {
                 </button>
                 <button
                   type="button"
-                  className="nora-generate"
-                  onClick={askNora}
+                  className="nora-generate nora-generate--secondary"
+                  onClick={() => askNora(false)}
                   disabled={noraLoading}
+                  title="Revisar la propuesta antes de agregarla"
+                >
+                  <Sparkles size={16} />
+                  Revisar
+                </button>
+                <button
+                  type="button"
+                  className="nora-generate"
+                  onClick={() => askNora(true)}
+                  disabled={noraLoading}
+                  title="Crear los conceptos y agregarlos directo a la cotización"
                 >
                   {noraLoading ? (
                     <LoaderCircle className="is-spinning" size={16} />
                   ) : (
                     <Sparkles size={16} />
                   )}
-                  {noraLoading ? "Preparando…" : "Crear conceptos"}
+                  {noraLoading ? "Preparando…" : "Crear y agregar"}
                 </button>
               </div>
 

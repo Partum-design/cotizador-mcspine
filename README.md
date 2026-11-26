@@ -26,10 +26,10 @@ npm run dev
 Configura en `.env.local` (y en Vercel → Settings → Environment Variables):
 
 ```env
-GEMINI_API_KEY=tu_clave_privada
+GOOGLE_API_KEY=tu_clave_privada
 ```
 
-La clave se usa únicamente en `/api/nora` y nunca se incluye en el código del navegador.
+También se acepta `GEMINI_API_KEY`. La clave se usa únicamente en `/api/nora` y nunca se incluye en el código del navegador.
 
 ## Catálogo
 

@@ -36,8 +36,8 @@ function noraLocalApi() {
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
-  if (env.GEMINI_API_KEY) {
-    process.env.GEMINI_API_KEY = env.GEMINI_API_KEY;
+  for (const name of ["GOOGLE_API_KEY", "GEMINI_API_KEY", "GEMINI_MODEL"]) {
+    if (env[name]) process.env[name] = env[name];
   }
 
   return {
