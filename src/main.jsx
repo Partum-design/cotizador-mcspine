@@ -44,10 +44,11 @@ const ITEM_CATEGORIES = [
 ];
 
 const SHORT_CATEGORY = {
-  "Implantes para columna": "Implante",
   "Sistemas de fijación": "Fijación",
   "Cajas intersomáticas": "Caja",
-  "Placas y tornillos": "Placa",
+  "Prótesis y estabilización": "Prótesis",
+  "Biológicos y selladores": "Biológico",
+  "Equipos quirúrgicos": "Equipo",
   "Instrumental y servicios": "Servicio",
 };
 
@@ -139,7 +140,7 @@ function CatalogPicker({ onAdd, addedSlugs }) {
     return PRODUCTS.filter((product) => {
       if (category !== "all" && product.category !== category) return false;
       if (!term) return true;
-      const haystack = `${product.name} ${product.desc} ${CATEGORY_LABEL[product.category]} ${
+      const haystack = `${product.name} ${product.brand || ""} ${product.desc} ${CATEGORY_LABEL[product.category]} ${
         ZONE_LABEL[product.zone] || ""
       }`
         .toLowerCase()
@@ -189,6 +190,7 @@ function CatalogPicker({ onAdd, addedSlugs }) {
               <span className="catalog-card__copy">
                 <strong>{product.name}</strong>
                 <small>
+                  {product.brand ? `${product.brand} · ` : ""}
                   {CATEGORY_LABEL[product.category]}
                   {product.zone ? ` · ${ZONE_LABEL[product.zone]}` : ""}
                 </small>
@@ -672,7 +674,7 @@ function App() {
                   maxLength="1200"
                   value={noraPrompt}
                   onChange={(event) => setNoraPrompt(event.target.value)}
-                  placeholder="Ejemplo: 2 cajas ADONIS TLIF a $18,500 cada una, un sistema SpineTune TL de 4 tornillos a $42,000 y renta de instrumental."
+                  placeholder="Ejemplo: 2 cajas MectaLIF Transforaminal a $18,500 cada una, un sistema MEGAFIX de 4 tornillos a $42,000 y renta de instrumental."
                 />
                 <small>{noraPrompt.length}/1200 caracteres</small>
               </label>

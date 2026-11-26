@@ -6,7 +6,7 @@ import { PRODUCTS, CATEGORY_LABEL } from "../src/products.js";
 const CATEGORIES = [...Object.values(CATEGORY_LABEL), "Instrumental y servicios"];
 const SLUGS = PRODUCTS.map((product) => product.slug);
 const CATALOG_TEXT = PRODUCTS.map(
-  (product) => `- ${product.slug}: ${product.name} (${CATEGORY_LABEL[product.category]})`,
+  (product) => `- ${product.slug}: ${product.name}${product.brand ? ` de ${product.brand}` : ""} (${CATEGORY_LABEL[product.category]})`,
 ).join("\n");
 const findProduct = (slug) => PRODUCTS.find((product) => product.slug === slug);
 

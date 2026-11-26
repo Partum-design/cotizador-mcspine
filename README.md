@@ -4,7 +4,7 @@ Cotizador comercial de implantes y material para cirugía de columna de **MC Spi
 
 ## Funciones
 
-- Catálogo MC Spine integrado (27 productos con imagen, categoría y zona anatómica): búsqueda, filtros y alta con un toque.
+- Catálogo MC Spine integrado (19 productos del catálogo 2026 con imagen, marca, categoría y zona anatómica): búsqueda, filtros y alta con un toque.
 - Vista previa de la cotización en tiempo real, con imagen de cada producto.
 - Conceptos editables, duplicables y reordenables (también conceptos libres: instrumental, servicios, etc.).
 - Cálculo automático de subtotal, descuento, IVA y total.
