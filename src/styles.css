@@ -1457,8 +1457,8 @@ select:focus-visible {
 }
 
 .paper-footer > div .paper-footer__seal {
-  width: 28px;
-  height: 28px;
+  width: 44px;
+  height: 44px;
   position: relative;
   flex: 0 0 auto;
   overflow: hidden;
@@ -1466,8 +1466,8 @@ select:focus-visible {
 }
 
 .paper-footer__seal img {
-  width: 28px;
-  height: 28px;
+  width: 44px;
+  height: 44px;
   display: block;
   object-fit: contain;
 }
